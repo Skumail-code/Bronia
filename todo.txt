@@ -1,0 +1,2 @@
+fontFamily: GoogleFonts.orbitron().fontFamily,
+                  primaryTextTheme: GoogleFonts.latoTextTheme(),

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "940337615587",
+    "project_id": "dartchat-e54b6",
+    "storage_bucket": "dartchat-e54b6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940337615587:android:4a0701bc761f4237812bd6",
+        "android_client_info": {
+          "package_name": "com.example.chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "940337615587-4iamfof79iqk33crvngjpuhj6l9eapf3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatapp",
+            "certificate_hash": "d536d311e155518f53b633242e43ae48b9cc891e"
+          }
+        },
+        {
+          "client_id": "940337615587-89c490sv6oh8uav6c6kg0o7rtraukpoq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbt55CgyZ_k4isM4azUL2uJ-z7YO0Kayw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "940337615587-89c490sv6oh8uav6c6kg0o7rtraukpoq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
