@@ -9,7 +9,7 @@ class ChatPage extends StatefulWidget {
   final String groupId;
   final String groupName;
   final String userName;
-  const ChatPage(
+  ChatPage(
       {super.key,
       required this.groupId,
       required this.groupName,
@@ -20,6 +20,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  ScrollController _scrollController = ScrollController();
   Stream<QuerySnapshot>? chats;
   TextEditingController messageController = TextEditingController();
   String admin = "";
@@ -69,30 +70,93 @@ class _ChatPageState extends State<ChatPage> {
               ))
         ],
       ),
+      //old code
+      // body: Stack(
+      //   children: [
+      //     // chat messages here
+      //     chatMessages(),
+      //     Container(
+      //       alignment: Alignment.bottomCenter,
+      //       width: MediaQuery.of(context).size.width,
+      //       child: Container(
+      //         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      //         width: MediaQuery.of(context).size.width,
+      //         color: Colors.grey[300]?.withOpacity(0.7),
+      //         height: 70,
+      //         child: Row(
+      //           children: [
+      //             Expanded(
+      //                 child: TextFormField(
+      //               controller: messageController,
+      //               style: TextStyle(color: Theme.of(context).primaryColor),
+      //               decoration: InputDecoration(
+      //                   hintText: "Send a message...",
+      //                   hintStyle: TextStyle(
+      //                       color: Theme.of(context).primaryColor,
+      //                       fontSize: 16),
+      //                   border: InputBorder.none),
+      //             )),
+      //             const SizedBox(
+      //               width: 12,
+      //             ),
+      //             GestureDetector(
+      //               onTap: () {
+      //                 sendMessage();
+      //               },
+      //               child: Container(
+      //                 height: 50,
+      //                 width: 50,
+      //                 decoration: BoxDecoration(
+      //                   color: Theme.of(context).primaryColor,
+      //                   borderRadius: BorderRadius.circular(30),
+      //                 ),
+      //                 child: const Center(
+      //                     child: Icon(
+      //                   Icons.send,
+      //                   color: Colors.white,
+      //                 )),
+      //               ),
+      //             )
+      //           ],
+      //         ),
+      //       ),
+      //     )
+      //   ],
+      // ),
       body: Stack(
         children: [
           // chat messages here
-          chatMessages(),
-          Container(
-            alignment: Alignment.bottomCenter,
+          Positioned(
+            top: 0,
+            bottom: 70, // Adjust this value based on your needs
+            left: 0,
+            right: 0,
+            child: chatMessages(),
+          ),
+          Positioned(
+            bottom: 0,
             width: MediaQuery.of(context).size.width,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               width: MediaQuery.of(context).size.width,
-              color: Colors.grey[300]?.withOpacity(0.7),
+              color: Colors.grey[300],
+              height: 70,
               child: Row(
                 children: [
                   Expanded(
-                      child: TextFormField(
-                    controller: messageController,
-                    style: TextStyle(color: Theme.of(context).primaryColor),
-                    decoration: InputDecoration(
+                    child: TextFormField(
+                      controller: messageController,
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                      decoration: InputDecoration(
                         hintText: "Send a message...",
                         hintStyle: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 16),
-                        border: InputBorder.none),
-                  )),
+                          color: Theme.of(context).primaryColor,
+                          fontSize: 16,
+                        ),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     width: 12,
                   ),
@@ -108,10 +172,11 @@ class _ChatPageState extends State<ChatPage> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: const Center(
-                          child: Icon(
-                        Icons.send,
-                        color: Colors.white,
-                      )),
+                        child: Icon(
+                          Icons.send,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   )
                 ],
@@ -123,22 +188,56 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  // chatMessages() {
+  //   return StreamBuilder(
+  //     stream: chats,
+  //     builder: (context, AsyncSnapshot snapshot) {
+  //       return snapshot.hasData
+  //           ? ListView.builder(
+  //               controller: _scrollController,
+  //               reverse: true,
+  //               itemCount: snapshot.data.docs.length,
+  //               itemBuilder: (context, index) {
+  //                 return MessageTile(
+  //                     message: snapshot.data.docs[index]['message'],
+  //                     sender: snapshot.data.docs[index]['sender'],
+  //                     sentByMe: widget.userName ==
+  //                         snapshot.data.docs[index]['sender']);
+  //               },
+  //             )
+  //           : Container();
+  //     },
+  //   );
+  // }
+
   chatMessages() {
-    return StreamBuilder(
-      stream: chats,
-      builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  return MessageTile(
-                      message: snapshot.data.docs[index]['message'],
-                      sender: snapshot.data.docs[index]['sender'],
-                      sentByMe: widget.userName ==
-                          snapshot.data.docs[index]['sender']);
-                },
-              )
-            : Container();
+    return ListView.builder(
+      controller: _scrollController,
+      reverse: true,
+      itemCount: 1, // Using a single item here
+      itemBuilder: (context, index) {
+        return StreamBuilder(
+          stream: chats,
+          builder: (context, AsyncSnapshot snapshot) {
+            if (!snapshot.hasData) {
+              return Container();
+            }
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                return MessageTile(
+                  message: snapshot.data.docs[index]['message'],
+                  sender: snapshot.data.docs[index]['sender'],
+                  sentByMe:
+                      widget.userName == snapshot.data.docs[index]['sender'],
+                );
+              },
+            );
+          },
+        );
       },
     );
   }
